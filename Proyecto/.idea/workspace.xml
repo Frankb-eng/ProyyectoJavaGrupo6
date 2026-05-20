@@ -5,116 +5,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6cbcf4ee-834f-45a6-9eec-9381b5f47de5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.Dockerfile.swp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dockerignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/06-JakartaProyectoReferencia.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TallerJava-1717006862758.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/comandos mariadb.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.cli" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config_docker.cli" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mariadb-java-client-3.3.3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/Interface/evento/in/ObserverClienteRegistrado.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/Interface/evento/out/EventoCargaFinalizada.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/Interface/evento/out/PublicadorEventoCarga.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/Interface/local/InterfaceLocalCarga.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/Interface/remota/rest/CargaAPI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/Interface/remota/rest/dto/EstacionDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/Interface/remota/rest/dto/FinalizarCargaDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/Interface/remota/rest/dto/IniciarCargaDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/aplicacion/ServicioCarga.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/aplicacion/impl/ServicioCargaImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/Carga.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/Cargador.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/ClienteCarga.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/EstacionCarga.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/EstadoCarga.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/EstadoCargador.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/TipoCargador.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/TipoConector.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/repositorio/CargaRepositorio.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/repositorio/CargadorRepositorio.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/repositorio/ClienteCargaRepositorio.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/dominio/repositorio/EstacionRepositorio.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/infraestructura/persistencia/CargaRepositorioImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/infraestructura/persistencia/CargadorRepositorioImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/infraestructura/persistencia/ClienteCargaRepositorioImpljava.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCarga/infraestructura/persistencia/EstacionRepositorioImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/Interface/evento/out/ClienteRegistradoEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/Interface/evento/out/MedioPagoAgregadoEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/Interface/evento/out/PublicadorEventoCliente.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/Interface/evento/out/PublicadorEventoMedioPago.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/Interface/local/InterfaceLocalCliente.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/Interface/remota/rest/ClienteAPI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/Interface/remota/rest/dto/ClienteDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/Interface/remota/rest/dto/MedioPagoDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/Interface/remota/rest/dto/ReclamoDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/aplicacion/ServicioClientes.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/aplicacion/impl/ServicioClientesImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/Cliente.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/ClienteComun.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/ClienteProfesional.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/CuentaUTE.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/MedioPago.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/Reclamo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/Tarjeta.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/TipoProfesional.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/TipoTarjeta.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/dominio/repositorio/ClienteRepocitorio.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloCliente/infraestructura/persistencia/ClienteRepositorioImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/Interface/evento/in/ObserverCargaFinalizada.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/Interface/evento/in/ObserverClienteRegistrado.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/Interface/evento/in/ObserverMedioPagoAgregado.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/Interface/local/InterfaceLocalPago.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/PagoAPI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/dto/PagoDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/aplicacion/ServicioPago.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/aplicacion/impl/ServicioPagoImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/dominio/ClientePago.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/dominio/EstadoPago.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/dominio/MedioPagoPago.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/dominio/Pago.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/dominio/repositorio/ClientePagoRepositorio.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/dominio/repositorio/MedioPagoPagoRepositorio.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/dominio/repositorio/PagoRepositorio.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/infraestructura/externos/FacturaUTEMock.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/infraestructura/externos/TarjetaMock.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/infraestructura/persistencia/ClientePagoRepositorioImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/infraestructura/persistencia/MedioPagoPagoRepositorioImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/tallerjava/ModuloPago/infraestructura/persistencia/PagoRepositorioImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/test/org/tallerjava/moduloPeaje/aplicacion/impl/VerificoTagExtranjeroConPostPagoError.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/test/org/tallerjava/moduloPeaje/aplicacion/impl/VerificoTagExtranjeroConPostPagoOk.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/test/org/tallerjava/moduloPeaje/aplicacion/impl/VerificoTagExtranjeroConPrePagoOk.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/classes/META-INF/initial_data.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/classes/META-INF/persistence.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloCliente/dominio/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloCliente/dominio/Cliente.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/PagoAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/PagoAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/dto/PagoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/dto/PagoDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/aplicacion/ServicioPago.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/aplicacion/ServicioPago.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/aplicacion/impl/ServicioPagoImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/aplicacion/impl/ServicioPagoImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/EstadoPago.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/EstadoPago.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/Pago.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/Pago.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/repositorio/PagoRepositorio.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/repositorio/PagoRepositorio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/infraestructura/persistencia/PagoRepositorioImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/infraestructura/persistencia/PagoRepositorioImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 0
-}]]></component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="3DukkAjEglsZ9rOEa1eW3dA4Mw1" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -124,8 +50,14 @@
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true"
+    "kotlin-language-version-configured": "true",
+    "project.structure.last.edited": "Global Libraries",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
   <component name="SharedIndexes">

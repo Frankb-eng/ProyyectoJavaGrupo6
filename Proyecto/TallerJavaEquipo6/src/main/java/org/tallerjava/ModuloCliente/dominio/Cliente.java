@@ -1,6 +1,8 @@
 package org.tallerjava.ModuloCliente.dominio;
 
 import jakarta.persistence.*;
+import org.tallerjava.ModuloPago.dominio.Pago;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +26,10 @@ public abstract class Cliente {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cedula_cliente")
     private List<Reclamo> reclamos = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "cedula_cliente")
+    private List<Pago> pagos = new ArrayList<>();
 
     protected Cliente() {}
 
@@ -78,6 +84,12 @@ public abstract class Cliente {
 
     public List<Reclamo> getReclamos() {
         return Collections.unmodifiableList(reclamos);
+        //se retorna asi para evitar que desde afuera se modifique la lista de reclamos directamente
+    }
+
+    public void agregarPago(Pago pago){ pagos.add(pago); }
+    public List<Pago> getPagos() {
+        return Collections.unmodifiableList(pagos);
         //se retorna asi para evitar que desde afuera se modifique la lista de reclamos directamente
     }
 }

@@ -1,6 +1,9 @@
 package org.tallerjava.ModuloPago.Interface.remota.rest.dto;
 
 import org.tallerjava.ModuloPago.dominio.*;
+import org.tallerjava.ModuloCliente.dominio.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class PagoDTO {
 
@@ -8,6 +11,8 @@ public class PagoDTO {
     private int importe;
     private LocalDate fecha;
     private LocalDateTime hora;
+    private Long idMedioPago;
+    private EstadoPago estado;
 
     public PagoDTO() {}
 
@@ -28,7 +33,11 @@ public class PagoDTO {
     public void setHora(LocalDateTime hora) { this.hora = hora; }
 
     public Pago build(){
-        Pago pago = new Pago(id,importe,fecha,hora);
+        Pago pago = new Pago(this.importe,this.idMedioPago);
+        pago.setId(this.id);
+        pago.setFecha(LocalDate.now());
+        pago.setHora(LocalDateTime.now());
+        pago.setEstado(this.estado);
         return pago;
     }
 

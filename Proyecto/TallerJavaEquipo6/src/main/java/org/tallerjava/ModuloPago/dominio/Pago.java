@@ -2,6 +2,9 @@ package org.tallerjava.ModuloPago.dominio;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "pagos")
 public class Pago {
@@ -11,12 +14,16 @@ public class Pago {
     private int importe;
     private LocalDate fecha;
     private LocalDateTime hora;
+    private Long idMedioPago;
+    @Enumerated(EnumType.STRING)
+    private EstadoPago estado;
 
-    public Pago(Long id, int importe, LocalDate fecha, LocalDateTime hora) {
-        this.id = id;
+    public Pago(int importe, Long idMedioPago ) {
         this.importe = importe;
-        this.fecha = fecha;
-        this.hora = hora;
+        this.fecha = LocalDate.now();
+        this.hora = LocalDateTime.now();
+        this.idMedioPago = idMedioPago;
+        this.estado = EstadoPago.PROSESANDO;
     }
 
     public Long getId() { return id; }
@@ -27,4 +34,8 @@ public class Pago {
     public void setFecha(LocalDate fecha) { this.fecha = fecha; }
     public LocalDateTime getHora() { return hora; }
     public void setHora(LocalDateTime hora) { this.hora = hora; }
+    public Long getIdMedioPago() { return idMedioPago; }
+    public void setIdMedioPago(Long idMedioPago) { this.idMedioPago = idMedioPago; }
+    public EstadoPago getEstado() { return estado; }
+    public void setEstado(EstadoPago estado) { this.estado = estado; }
 }

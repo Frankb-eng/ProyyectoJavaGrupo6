@@ -6,8 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="06-JakartaProyectoReferencia" />
+        <module name="TallerJavaEquipo6" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="06-JakartaProyectoReferencia" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
