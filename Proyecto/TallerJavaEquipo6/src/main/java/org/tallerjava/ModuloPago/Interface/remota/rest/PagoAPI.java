@@ -45,6 +45,8 @@ public class PagoAPI {
         try {
             Pago pago = dto.build();
             pago.setEstado(EstadoPago.COMPLETADO);
+            /*pago.setIdMedioPago(dto.getIdMedioPago());
+            pago.setIdCliente(dto.getIdCliente());*/
             servicioPago.altaPago(cedula, pago);
             return Response.ok().entity("Carga pagada correctamente").build();
 

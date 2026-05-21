@@ -14,15 +14,20 @@ public class Pago {
     private int importe;
     private LocalDate fecha;
     private LocalDateTime hora;
+    @Column(name = "cedula_cliente")
+    private String cedulaCliente;
     private Long idMedioPago;
     @Enumerated(EnumType.STRING)
     private EstadoPago estado;
 
-    public Pago(int importe, Long idMedioPago ) {
+    public Pago() {} //porque JPA lo quiere
+
+    public Pago(String cliente, int importe, Long idMedioPago ) {
         this.importe = importe;
         this.fecha = LocalDate.now();
         this.hora = LocalDateTime.now();
         this.idMedioPago = idMedioPago;
+        this.cedulaCliente = cliente;
         this.estado = EstadoPago.PROSESANDO;
     }
 
@@ -38,4 +43,12 @@ public class Pago {
     public void setIdMedioPago(Long idMedioPago) { this.idMedioPago = idMedioPago; }
     public EstadoPago getEstado() { return estado; }
     public void setEstado(EstadoPago estado) { this.estado = estado; }
+
+    public String getCedulaCliente() {
+        return cedulaCliente;
+    }
+
+    public void setCedulaCliente(String cedulaCliente) {
+        this.cedulaCliente = cedulaCliente;
+    }
 }
