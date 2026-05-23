@@ -39,7 +39,7 @@ public class PagoRepositorioImpl implements PagoRepositorio {
         return em.createQuery(
                         "SELECT p " +
                                 "FROM Pago p " +
-                                "WHERE p.cedula_cliente = :cedula " +
+                                "WHERE p.cedulaCliente = :cedula " +
                                 "AND p.fecha BETWEEN :fechaIni AND :fechaFin",
                         Pago.class)
                 .setParameter("cedula", cedula)

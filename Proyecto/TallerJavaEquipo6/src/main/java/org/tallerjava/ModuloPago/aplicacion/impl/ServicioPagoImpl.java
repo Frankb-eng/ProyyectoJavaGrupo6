@@ -4,8 +4,10 @@ package org.tallerjava.ModuloPago.aplicacion.impl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
 import org.tallerjava.ModuloCliente.dominio.Cliente;
 import org.tallerjava.ModuloCliente.dominio.repositorio.ClienteRepositorio;
+import org.tallerjava.ModuloPago.Interface.local.InterfaceLocalPago;
 import org.tallerjava.ModuloPago.Interface.remota.rest.dto.PagoDTO;
 import org.tallerjava.ModuloPago.aplicacion.ServicioPago;
 import org.tallerjava.ModuloPago.dominio.Pago;
@@ -18,7 +20,7 @@ import org.jboss.logging.Logger;
 
 @ApplicationScoped
 @Transactional
-public class ServicioPagoImpl implements ServicioPago
+public class ServicioPagoImpl implements ServicioPago, InterfaceLocalPago
 {
     @Inject
     PagoRepositorio pagoRepositorio;
@@ -43,4 +45,10 @@ public class ServicioPagoImpl implements ServicioPago
     }
 
     public List<Pago> consultarPagos(String cedula, LocalDate fechaIni, LocalDate fechaFin){ return pagoRepositorio.listarPagosPorCedulaYFechas(cedula,fechaIni,fechaFin); }
+
+    public boolean pagarCarga(String cedula, int importe, Long idMedioPago){
+        Pago pago = new Pago(cedula,importe,idMedioPago);
+        this.altaPago(cedula, pago);
+        return true;
+    }
 }

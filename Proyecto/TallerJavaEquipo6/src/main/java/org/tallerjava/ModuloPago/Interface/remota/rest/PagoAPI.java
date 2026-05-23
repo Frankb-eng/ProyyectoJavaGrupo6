@@ -38,20 +38,5 @@ public class PagoAPI {
         return Response.ok(pagos).build();
     }
 
-    @POST
-    @Path("/{cedula}/pagar")
-    public Response pagarCarga(@PathParam("cedula") String cedula, PagoDTO dto){
 
-        try {
-            Pago pago = dto.build();
-            pago.setEstado(EstadoPago.COMPLETADO);
-            servicioPago.altaPago(cedula, pago);
-            return Response.ok().entity("Carga pagada correctamente").build();
-
-
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-
-        }
-    }
 }

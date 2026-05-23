@@ -12,6 +12,7 @@ public class PagoDTO {
     private LocalDate fecha;
     private LocalDateTime hora;
     private Long idMedioPago;
+    private String idCliente;
     private EstadoPago estado;
 
     public PagoDTO() {}
@@ -32,8 +33,20 @@ public class PagoDTO {
 
     public void setHora(LocalDateTime hora) { this.hora = hora; }
 
+    public Long getIdMedioPago() {return idMedioPago;}
+
+    public void setIdMedioPago(Long idMedioPago) {this.idMedioPago = idMedioPago;}
+
+    public String getIdCliente() {return idCliente;}
+
+    public void setIdCliente(String idCliente) {this.idCliente = idCliente;}
+
+    public EstadoPago getEstado() {return estado;}
+
+    public void setEstado(EstadoPago estado) {this.estado = estado;}
+
     public Pago build(){
-        Pago pago = new Pago(this.importe,this.idMedioPago);
+        Pago pago = new Pago(this.idCliente,this.importe,this.idMedioPago);
         pago.setId(this.id);
         pago.setFecha(LocalDate.now());
         pago.setHora(LocalDateTime.now());

@@ -1,5 +1,7 @@
 package org.tallerjava.ModuloPago.Interface.local;
 
+import jakarta.ws.rs.core.Response;
+
 public interface InterfaceLocalPago {
-    boolean pagarCarga(String cedulaCliente, long importeCentavos, long idMedioPago);
+    public boolean pagarCarga(String cedula, int importe, Long idMedioPago);
 }
