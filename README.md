@@ -8,12 +8,13 @@
 ## Índice
 
 1. [Descripción General](#descripción-general)
-2. [Arquitectura del Sistema](#arquitectura-del-sistema)
-3. [Estructura de Paquetes](#estructura-de-paquetes)
-4. [Módulo Clientes](#módulo-clientes)
-5. [Módulo Cargas](#módulo-cargas)
-6. [Módulo Pagos](#módulo-pagos)
-7. [Comunicación entre Módulos](#comunicación-entre-módulos)
+2. [Decisiones de Diseño](#decisiones-de-diseño)
+3. [Arquitectura del Sistema](#arquitectura-del-sistema)
+4. [Estructura de Paquetes](#estructura-de-paquetes)
+5. [Módulo Clientes](#módulo-clientes)
+6. [Módulo Cargas](#módulo-cargas)
+7. [Módulo Pagos](#módulo-pagos)
+8. [Comunicación entre Módulos](#comunicación-entre-módulos)
 
 ---
 
@@ -27,6 +28,25 @@ El backend está implementado como un **monolito modular** sobre **Jakarta EE**,
 > - [Jakarta EE — CDI Specification](https://jakarta.ee/specifications/cdi/)
 > - [Quarkus — Dependency Injection](https://quarkus.io/guides/cdi)
 > - [Microservices Patterns — Sam Newman](https://samnewman.io/books/building_microservices/)
+
+---
+
+## Decisiones de Diseño
+
+- **Tres módulos principales**: Clientes, Cargas y Pagos. Cada uno es independiente y tiene
+  sus propias clases de dominio y sus propias tablas en la base de datos.
+
+- **Los módulos no se llaman directamente**: se comunican solo por eventos CDI.
+  Si el módulo Clientes necesita avisarle algo al módulo Pagos, dispara un evento.
+  Ningún módulo importa clases de dominio de otro.
+
+- **Capas bien separadas dentro de cada módulo**: dominio, aplicación, interfaz e infraestructura.
+  El dominio no sabe nada de HTTP, ni de base de datos, ni de eventos. Solo tiene lógica de negocio.
+
+- **Persistencia con JPA/Hibernate sobre MariaDB**. Cada módulo maneja sus propias tablas.
+
+- **Inyección de dependencias con CDI**. El contenedor de Jakarta EE resuelve las dependencias
+  en tiempo de ejecución, sin que las clases se instancien entre sí manualmente.
 
 ---
 
@@ -157,75 +177,252 @@ src/main/java/org/tallerjava/
 
 ## Módulo Clientes
 
-### Responsabilidad
 
-Gestiona el ciclo de vida del cliente en el sistema: registro, autenticación, asociación de medios de pago y realización de reclamos. Es el **módulo productor de eventos** que notifica al resto del sistema cuando un cliente o medio de pago es creado.
+### Modelo de dominio
 
-### Dominio
+```mermaid
+classDiagram
+    class Cliente {
+        <<abstract>>
+        -String cedula
+        -String nombreCompleto
+        -String telefono
+        -String contrasena
+        +agregarMedioPago(MedioPago)
+        +agregarReclamo(Reclamo)
+        +obtenerMedioPagoPredeterminado() MedioPago
+        +aplicarDescuento(double) double
+    }
 
+    class ClienteComun {
+        +aplicarDescuento(double) double
+    }
+
+    class ClienteProfesional {
+        -TipoProfesional tipoProfesional
+        -double porcentajeDescuento
+        +aplicarDescuento(double) double
+    }
+
+    class TipoProfesional {
+        <<enum>>
+        TAXI
+        UBER
+        CABIFY
+    }
+
+    class MedioPago {
+        <<abstract>>
+        -Long id
+        -boolean predeterminado
+        +esPredeterminado() boolean
+        +setPredeterminado(boolean)
+    }
+
+    class Tarjeta {
+        -String numero
+        -String titular
+        -LocalDate fechaVencimiento
+        -String digitoVerificacion
+        -TipoTarjeta tipoTarjeta
+        +ultimosCuatroDigitos() String
+    }
+
+    class CuentaUTE {
+        -String numeroCuenta
+    }
+
+    class TipoTarjeta {
+        <<enum>>
+        VISA
+        MASTERCARD
+        OCA
+        AMEX
+    }
+
+    class Reclamo {
+        -Long id
+        -String comentario
+        -LocalDateTime fecha
+        -String cedulaCliente
+    }
+
+    Cliente <|-- ClienteComun
+    Cliente <|-- ClienteProfesional
+    ClienteProfesional --> TipoProfesional
+    Cliente "1" --> "0..*" MedioPago
+    Cliente "1" --> "0..*" Reclamo
+    MedioPago <|-- Tarjeta
+    MedioPago <|-- CuentaUTE
+    Tarjeta --> TipoTarjeta
 ```
-         ┌─────────────────────────────┐
-         │          «abstract»         │
-         │           Cliente           │
-         ├─────────────────────────────┤
-         │ - cedula: String            │
-         │ - nombreCompleto: String    │
-         │ - telefono: String          │
-         │ - contrasena: String (hash) │
-         │ - mediosDePago: List        │
-         │ - pagos: List               │
-         └──────────────┬──────────────┘
-                        │
-           ┌────────────┴────────────┐
-           │                         │
-  ┌────────┴──────┐       ┌──────────┴────────────┐
-  │ ClienteComun  │       │   ClienteProfesional   │
-  └───────────────┘       ├───────────────────────┤
-                          │ - tipo: TipoProfesional│
-                          │ - porcentajeDescuento  │
-                          └───────────────────────┘
 
-  ┌─────────────────┐
-  │  «interface»    │
-  │   MedioPago     │
-  └────────┬────────┘
-           │
-    ┌──────┴──────┐
-    │             │
- ┌──┴──┐    ┌────┴────┐
- │Tarjeta│  │CuentaUTE│
- └──────┘  └─────────┘
+### Casos de uso
+
+| Caso de uso | Consumidor | Qué hace |
+|-------------|------------|----------|
+| `registrarCliente` | App móvil | Registra un cliente nuevo, hashea la contraseña y avisa a los otros módulos |
+| `altaMedioPago` | App móvil | Agrega un medio de pago al cliente. El primero que se agrega queda como predeterminado |
+| `obtenerClientes` | Gestor web | Devuelve la lista de todos los clientes registrados |
+| `realizarReclamo` | App móvil | Guarda un reclamo del cliente con su comentario y la fecha del sistema |
+
+### Cómo se implementó cada caso de uso
+
+**registrarCliente**
+
+La API recibe un `ClienteDTO`. El DTO tiene un método `build()` que decide qué subclase
+crear: si el tipo es `PROFESIONAL` crea un `ClienteProfesional` con su descuento,
+si es `COMUN` crea un `ClienteComun`. Esta decisión vive en el DTO para no ensuciar el servicio.
+
+El `tipoProfesional` llega como String y se convierte a mayúsculas antes de pasarlo a
+`TipoProfesional.valueOf()`, para que no falle si viene en minúscula.
+
+Antes de guardar, el servicio verifica que no exista otro cliente con esa cédula.
+Si ya existe, lanza `IllegalStateException` y la API responde `400 BAD REQUEST`.
+La contraseña se hashea con BCrypt, nunca se guarda en texto plano.
+
+Al terminar, se dispara `ClienteRegistradoEvent` con la cédula, nombre y tipo del cliente
+(solo datos primitivos, sin objetos de dominio) para que Cargas y Pagos guarden su copia.
+
+**altaMedioPago**
+
+La API recibe un `MedioPagoDTO`. El `build()` del DTO crea la subclase correcta:
+`Tarjeta` o `CuentaUTE` según el campo `tipo`.
+
+La lógica de cuál es el predeterminado está en el dominio, en `Cliente.agregarMedioPago()`:
+si la lista de medios de pago está vacía, el nuevo medio queda como predeterminado automáticamente.
+El servicio no necesita saber nada de eso.
+
+Al responder, el número de tarjeta se enmascara con `**** **** **** XXXX` usando
+`tarjeta.ultimosCuatroDigitos()`. El dígito de verificación nunca se incluye en la respuesta.
+
+Se dispara `MedioPagoAgregadoEvent` con el id técnico, el tipo y si es predeterminado.
+Nunca se manda el número de tarjeta en el evento.
+
+**obtenerClientes**
+
+El servicio devuelve los objetos `Cliente` de la base de datos, pero la API los convierte
+a `ClienteDTO` con `ClienteDTO.convertirDTO(cliente)` antes de responder. Eso hace que
+la contraseña hasheada nunca salga en la respuesta HTTP aunque esté en el objeto de dominio.
+
+**realizarReclamo**
+
+La API recibe un `ReclamoDTO` con el comentario. El servicio crea un `Reclamo` nuevo
+pasando el comentario y la cédula — la fecha la pone el constructor con `LocalDateTime.now()`,
+el cliente no puede manipularla. Luego llama a `cliente.agregarReclamo()` y persiste.
+
+Si la cédula no existe, lanza `IllegalArgumentException` y la API devuelve `400 BAD REQUEST`.
+
+### Eventos que produce
+
+```mermaid
+graph LR
+    ServicioClientes["ServicioClientesImpl"]
+
+    ServicioClientes -->|"via PublicadorEventoCliente"| E1["🔔 ClienteRegistradoEvent\ncedula, nombre, tipo"]
+    ServicioClientes -->|"via PublicadorEventoMedioPago"| E2["🔔 MedioPagoAgregadoEvent\ncedulaCliente, idMedioPago\ntipoMedioPago, predeterminado"]
+
+    E1 -->|"@Observes"| OC["ObserverClienteRegistrado\n(ModuloCarga)\n→ guarda ClienteCarga"]
+    E1 -->|"@Observes"| OP["ObserverClienteRegistrado\n(ModuloPagos)\n→ guarda ClientePago"]
+    E2 -->|"@Observes"| OM["ObserverMedioPagoAgregado\n(ModuloPagos)\n→ guarda MedioPagoPago"]
 ```
 
-### Interfaz de Servicio (`ServicioClientes`)
+### Diagrama de secuencia — Flujo de eventos
 
-| Método | Consumidor | Descripción |
-|--------|-----------|-------------|
-| `registrarCliente(Cliente cliente)` | App móvil | Registra un nuevo cliente. Hashea la contraseña con BCrypt antes de persistir. Publica el evento `ClienteRegistradoEvent` para que los módulos Cargas y Pagos repliquen el cliente en sus propios contextos. |
-| `altaMedioPago(String cedula, MedioPago medioPago)` | App móvil | Asocia un medio de pago (Tarjeta o CuentaUTE) a un cliente existente. Publica el evento `MedioPagoAgregadoEvent`. |
-| `obtenerClientes()` | Gestor web | Retorna la lista completa de clientes registrados. |
-| `realizarReclamo(String cedula, String comentario)` | App móvil | Registra un reclamo del cliente identificado por cédula. |
-| `buscarPorCedula(String cedula)` | Interno / otros módulos | Retorna el `Cliente` correspondiente a la cédula indicada. |
-| `existeCliente(String cedula)` | Interno | Verifica si existe un cliente con la cédula indicada. Utilizado como validación previa en operaciones de escritura. |
+```mermaid
+sequenceDiagram
+    participant AppMovil as App Móvil
+    participant Clientes as Módulo Clientes
+    participant Cargas as Módulo Cargas
+    participant Pagos as Módulo Pagos
 
-### Interfaz Local (`InterfaceLocalCliente`)
+    AppMovil->>Clientes: POST /clientes/registrar
+    Clientes->>Clientes: guarda Cliente en BD
+    Clientes-->>Cargas: ClienteRegistradoEvent
+    Clientes-->>Pagos: ClienteRegistradoEvent
+    Cargas->>Cargas: guarda ClienteCarga local
+    Pagos->>Pagos: guarda ClientePago local
 
-Expuesta hacia otros módulos que necesiten consultar el estado de un cliente de forma sincrónica, sin depender de eventos:
+    AppMovil->>Clientes: POST /clientes/{cedula}/medioPago
+    Clientes->>Clientes: guarda MedioPago en BD
+    Clientes-->>Pagos: MedioPagoAgregadoEvent
+    Pagos->>Pagos: guarda MedioPagoPago local
+```
 
-| Método | Descripción |
-|--------|-------------|
-| `existeCliente(String cedula)` | Verifica la existencia del cliente sin acoplamiento a la capa de aplicación del módulo. |
-| `buscarPorCedula(String cedula)` | Retorna el objeto `Cliente` para consultas puntuales desde otros módulos. |
+### Endpoints REST
 
-### Eventos publicados
+| Método | URL | Body | Respuesta |
+|--------|-----|------|-----------|
+| `POST` | `/api/clientes/registrar` | `ClienteDTO` | `201` cédula del cliente |
+| `POST` | `/api/clientes/{cedula}/medioPago` | `MedioPagoDTO` | `200` mensaje de confirmación |
+| `GET` | `/api/clientes` | — | `200` lista de clientes (sin contraseña) |
+| `POST` | `/api/clientes/{cedula}/reclamos` | `ReclamoDTO` | `201` mensaje de confirmación |
 
-| Evento | Cuando se dispara | Observadores |
-|--------|-------------------|--------------|
-| `ClienteRegistradoEvent` | Al completar `registrarCliente()` | `ModuloCarga`, `ModuloPago` |
-| `MedioPagoAgregadoEvent` | Al completar `altaMedioPago()` | `ModuloPago` |
+### Ejemplos curl
 
-> El uso de eventos CDI para la comunicación entre módulos sigue el patrón **Observer** y es la forma más desacoplada de integración, tal como establece la especificación Jakarta CDI.  
-> Referencia: [Jakarta CDI Events](https://jakarta.ee/specifications/cdi/3.0/jakarta-cdi-spec-3.0.html#events)
+**Registrar cliente común:**
+```bash
+curl -X POST http://localhost:8080/TallerJavaEquipo6/api/clientes/registrar \
+  -H "Content-Type: application/json" \
+  -d '{
+    "cedula": "12345678",
+    "nombreCompleto": "Juan Perez",
+    "telefono": "099123456",
+    "contrasena": "clave123",
+    "tipo": "COMUN"
+  }'
+```
+
+**Registrar cliente profesional:**
+```bash
+curl -X POST http://localhost:8080/TallerJavaEquipo6/api/clientes/registrar \
+  -H "Content-Type: application/json" \
+  -d '{
+    "cedula": "98765432",
+    "nombreCompleto": "Maria Garcia",
+    "telefono": "098456789",
+    "contrasena": "clave456",
+    "tipo": "PROFESIONAL",
+    "tipoProfesional": "TAXI",
+    "porcentajeDescuento": 15.0
+  }'
+```
+
+**Agregar tarjeta:**
+```bash
+curl -X POST http://localhost:8080/TallerJavaEquipo6/api/clientes/12345678/medioPago \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tipo": "TARJETA",
+    "numero": "4111111111111111",
+    "titular": "Juan Perez",
+    "fechaVencimiento": "2027-12-01",
+    "digitoVerificacion": "123",
+    "tipoTarjeta": "VISA"
+  }'
+```
+
+**Agregar cuenta UTE:**
+```bash
+curl -X POST http://localhost:8080/TallerJavaEquipo6/api/clientes/12345678/medioPago \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tipo": "UTE",
+    "numeroCuenta": "UTE-987654"
+  }'
+```
+
+**Realizar reclamo:**
+```bash
+curl -X POST http://localhost:8080/TallerJavaEquipo6/api/clientes/12345678/reclamos \
+  -H "Content-Type: application/json" \
+  -d '{"comentario": "El cargador no funciona"}'
+```
+
+**Obtener todos los clientes:**
+```bash
+curl http://localhost:8080/TallerJavaEquipo6/api/clientes
+```
 
 ---
 
@@ -350,6 +547,13 @@ Implementada por `ServicioPagoImpl`, consumida directamente por el Módulo Carga
 | Verbo | Path | Descripción |
 |-------|------|-------------|
 | `GET` | `/pagos/{cedula}/listarPagos?fechaIni=&fechaFin=` | Consulta pagos de un cliente en el rango de fechas. |
+
+### Ejemplos curl
+
+**Consultar Pagos por Fecha:**
+```bash
+curl -X GET "http://localhost:8080/TallerJavaEquipo6/api/pagos/12345678/listarPagos?fechaIni=2026-05-01&fechaFin=2026-05-31"
+```
 
 ---
 
