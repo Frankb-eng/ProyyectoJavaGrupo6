@@ -548,6 +548,13 @@ Implementada por `ServicioPagoImpl`, consumida directamente por el Módulo Carga
 |-------|------|-------------|
 | `GET` | `/pagos/{cedula}/listarPagos?fechaIni=&fechaFin=` | Consulta pagos de un cliente en el rango de fechas. |
 
+### Ejemplos curl
+
+**Consultar Pagos por Fecha:**
+```bash
+curl -X GET "http://localhost:8080/TallerJavaEquipo6/api/pagos/12345678/listarPagos?fechaIni=2026-05-01&fechaFin=2026-05-31"
+```
+
 ---
 
 ## Comunicación entre Módulos
