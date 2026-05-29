@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ServicioPago {
 
-    void altaPago(String cedula, Pago pago);
+    boolean altaPago(String cedula, Pago pago);
 
     List<Pago> consultarPagos(String cedula, LocalDate fechaIni, LocalDate fechaFin);
 
