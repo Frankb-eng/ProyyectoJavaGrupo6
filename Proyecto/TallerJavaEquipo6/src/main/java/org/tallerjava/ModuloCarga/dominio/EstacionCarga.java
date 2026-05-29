@@ -1,10 +1,16 @@
 package org.tallerjava.ModuloCarga.dominio;
-
+import jakarta.persistence.*;
+@Entity
+@Table(name = "estaciones_carga")
 public class EstacionCarga {
     //atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long idEstacion;
     private String descripcion, calle, departamento;
     private int longitud, latitud;
 
+    public EstacionCarga() {}
     public EstacionCarga(String descripcion, String calle, String departamento, int longitud, int latitud) {
         this.descripcion = descripcion;
         this.calle = calle;
@@ -52,4 +58,7 @@ public class EstacionCarga {
     public void setLatitud(int latitud) {
         this.latitud = latitud;
     }
+
+    public long getIdEstacion() {return idEstacion;}
+    public void setIdEstacion(long idEstacion) {this.idEstacion = idEstacion;}
 }

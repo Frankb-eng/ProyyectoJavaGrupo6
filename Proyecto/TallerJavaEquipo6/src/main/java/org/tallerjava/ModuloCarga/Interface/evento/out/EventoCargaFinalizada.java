@@ -1,9 +1,10 @@
 package org.tallerjava.ModuloCarga.Interface.evento.out;
 
 public class EventoCargaFinalizada {
-    private long idCarga, clienteId,idMedioPago, importe;
+    private long idCarga,idMedioPago, importe;
+    private String clienteId;
 
-    public EventoCargaFinalizada(long idCarga, long clienteId, long idMedioPago, long importe) {
+    public EventoCargaFinalizada(long idCarga, String clienteId, long idMedioPago, long importe) {
         this.idCarga = idCarga;
         this.clienteId = clienteId;
         this.idMedioPago = idMedioPago;
@@ -18,11 +19,11 @@ public class EventoCargaFinalizada {
         this.idCarga = idCarga;
     }
 
-    public long getClienteId() {
+    public String getCedulaCliente() {
         return clienteId;
     }
 
-    public void setClienteId(long clienteId) {
+    public void setCedulaCliente(String clienteId) {
         this.clienteId = clienteId;
     }
 

@@ -2,17 +2,30 @@ package org.tallerjava.ModuloCarga.dominio;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "cargas")
 public class Carga {
     //atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long idCarga;
     private LocalDate fecha;
     private LocalDateTime horaInicio, horaFin, horaEstimadaFin;  //horaEstimadaFin: solo si estado=activa
     private float importeTotal, recargoPorDemora;
-    private long idCLiente;
-    private int porcentajeAvance;  //solo si estado=activa
+    @Column(name = "cedula_cliente")
+    private String idCLiente;
+    private int porcentajeAvance;
+    //solo si estado=activa
+    @Enumerated(EnumType.STRING)
     private EstadoCarga estado;
+    private long idMedioPago;
+    private long idCargador;
 
-    public Carga(LocalDate fecha, LocalDateTime horaInicio, LocalDateTime horaFin, LocalDateTime horaEstimadaFin, float importeTotal, float recargoPorDemora, long idCLiente, int porcentajeAvance, EstadoCarga estado) {
+
+    public Carga() {}
+    public Carga(LocalDate fecha, LocalDateTime horaInicio, LocalDateTime horaFin, LocalDateTime horaEstimadaFin, float importeTotal, float recargoPorDemora, String idCLiente, int porcentajeAvance, EstadoCarga estado) {
         this.fecha = fecha;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
@@ -72,11 +85,10 @@ public class Carga {
         this.recargoPorDemora = recargoPorDemora;
     }
 
-    public long getIdCLiente() {
+    public String getIdCLiente() {
         return idCLiente;
     }
-
-    public void setIdCLiente(long idCLiente) {
+    public void setIdCLiente(String idCLiente) {
         this.idCLiente = idCLiente;
     }
 
@@ -95,4 +107,12 @@ public class Carga {
     public void setEstado(EstadoCarga estado) {
         this.estado = estado;
     }
+
+    public long getIdCarga()      { return idCarga; }
+    public void setIdCarga(long idCarga) {this.idCarga = idCarga;}
+    public long getIdMedioPago()  { return idMedioPago; }
+    public void setIdMedioPago(long idMedioPago) {this.idMedioPago = idMedioPago;}
+    public long getIdCargador()   { return idCargador; }
+    public void setIdCargador(long idCargador) {this.idCargador = idCargador;}
+
 }

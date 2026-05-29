@@ -1,4 +1,12 @@
 package org.tallerjava.ModuloCarga.dominio.repositorio;
 
-public class CargadorRepositorio {
+import org.tallerjava.ModuloCarga.dominio.Cargador;
+
+import java.util.Optional;
+
+
+public interface CargadorRepositorio {
+
+    void save(Cargador cargador);
+    Optional<Cargador> findById(long idCargador);
 }
