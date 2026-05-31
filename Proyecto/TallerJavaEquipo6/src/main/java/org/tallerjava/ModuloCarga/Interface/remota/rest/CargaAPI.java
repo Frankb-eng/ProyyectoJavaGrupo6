@@ -82,7 +82,7 @@ public class CargaAPI {
     public Response finalizarCarga(FinalizarCargaDTO dto) {
         try {
             servicioCarga.finalizarCarga(dto.getIdCargador(), dto.getConsumoKwh(), dto.getMinutosDemora());
-            return Response.ok("Carga finalizada correctamente").build();
+            return Response.ok("Carga finalizada. Verifique el estado del pago en el historial.").build();
         } catch (IllegalArgumentException | IllegalStateException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }

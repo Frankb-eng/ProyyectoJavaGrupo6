@@ -46,6 +46,7 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-client</artifactId>
 			<version>6.2.4.Final</version>
+			<scope>provided</scope>
 		</dependency>
 
 
@@ -53,6 +54,7 @@
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-shaded</artifactId>
 			<version>${weld.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

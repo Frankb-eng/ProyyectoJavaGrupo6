@@ -15,11 +15,11 @@ import org.tallerjava.ModuloCarga.dominio.repositorio.CargadorRepositorio;
 import org.tallerjava.ModuloCarga.dominio.repositorio.ClienteCargaRepositorio;
 import org.tallerjava.ModuloCarga.dominio.repositorio.EstacionRepositorio;
 import org.tallerjava.ModuloPago.Interface.local.InterfaceLocalPago;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 
 @ApplicationScoped
 public class ServicioCargaImpl implements ServicioCarga {
@@ -48,14 +48,21 @@ public class ServicioCargaImpl implements ServicioCarga {
     @Override
     @Transactional
     public long iniciarCarga(String cedulaCliente, long idCargador, long idMedioPago) {
+
         repoCliente.findById(cedulaCliente)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Cliente no encontrado en ModuloCarga: " + cedulaCliente));
 
+        if (!interfaceLocalPago.clienteHabilitadoParaCargar(cedulaCliente)) {
+            throw new IllegalStateException(
+                    "El cliente " + cedulaCliente +
+                            " tiene una deuda pendiente y no puede iniciar una nueva carga.");
+        }
+
         Optional<Carga> cargaActiva = repoCarga.findCargaActiva(cedulaCliente);
         if (cargaActiva.isPresent()) {
             throw new IllegalStateException(
-                    "El cliente " + cedulaCliente + " ya tiene una carga activa");
+                    "El cliente " + cedulaCliente + " ya tiene una carga activa.");
         }
 
         Cargador cargador = repoCargador.findById(idCargador)
@@ -64,7 +71,7 @@ public class ServicioCargaImpl implements ServicioCarga {
 
         if (cargador.getEstado() != EstadoCargador.DISPONIBLE) {
             throw new IllegalStateException(
-                    "El cargador " + idCargador + " no está disponible");
+                    "El cargador " + idCargador + " no está disponible.");
         }
 
         Carga carga = new Carga(
@@ -79,6 +86,9 @@ public class ServicioCargaImpl implements ServicioCarga {
 
         repoCargador.save(cargador);
         repoCarga.save(carga);
+
+        log.infof("Carga iniciada: cliente=%s, cargador=%d, idCarga=%d",
+                cedulaCliente, idCargador, carga.getIdCarga());
 
         return carga.getIdCarga();
     }
@@ -95,13 +105,11 @@ public class ServicioCargaImpl implements ServicioCarga {
         return repoCarga.findHistorico(cedulaCliente, fechaIni, fechaFin);
     }
 
-
     @Override
     @Transactional
     public void finalizarCarga(long idCargador, float consumoKwh, int minutosDemora) {
         log.infof("Finalizando carga: cargador=%d, consumo=%.2f kWh, demora=%d min",
                 idCargador, consumoKwh, minutosDemora);
-
 
         Cargador cargador = repoCargador.findById(idCargador)
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -115,7 +123,6 @@ public class ServicioCargaImpl implements ServicioCarga {
         float importeDemora  = minutosDemora * TARIFA_DEMORA_POR_MINUTO;
 
         log.infof("Importes: energía=%.2f, demora=%.2f", importeEnergia, importeDemora);
-
         carga.setHoraFin(LocalDateTime.now());
         carga.setImporteTotal(importeEnergia);
         carga.setRecargoPorDemora(importeDemora);
@@ -126,7 +133,6 @@ public class ServicioCargaImpl implements ServicioCarga {
 
         repoCarga.save(carga);
         repoCargador.save(cargador);
-
         int importeTotalCentavos = Math.round((importeEnergia + importeDemora) * 100);
 
         boolean pagoExitoso = interfaceLocalPago.pagarCarga(
@@ -136,13 +142,13 @@ public class ServicioCargaImpl implements ServicioCarga {
         );
 
         if (!pagoExitoso) {
-            throw new IllegalStateException(
-                    "El pago fallo para el cliente: " + carga.getIdCLiente());
+            log.warnf("Pago rechazado para cliente %s. Cliente bloqueado hasta saldar deuda.",
+                    carga.getIdCLiente());
+        } else {
+            log.infof("Carga finalizada y pago procesado correctamente: idCarga=%d",
+                    carga.getIdCarga());
         }
-
-        log.infof("Carga finalizada y pago procesado: idCarga=%d", carga.getIdCarga());
     }
-
 
     @Override
     @Transactional
@@ -151,7 +157,6 @@ public class ServicioCargaImpl implements ServicioCarga {
         repoEstacion.save(estacion);
         return estacion.getIdEstacion();
     }
-
 
     @Override
     @Transactional
@@ -163,7 +168,6 @@ public class ServicioCargaImpl implements ServicioCarga {
         repoCargador.save(cargador);
         return cargador.getIdCargador();
     }
-
 
     @Override
     public List<EstacionCarga> obtenerEstaciones() {

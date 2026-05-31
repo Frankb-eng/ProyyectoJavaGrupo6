@@ -13,7 +13,7 @@
             <properties>
                 <property
                     name="jakarta.persistence.schema-generation.database.action"
-                    value="update" />
+                    value="drop-and-create" />
                 <property name="jakarta.persistence.sql-load-script-source"
                     value="META-INF/initial_data.sql" />
                 <property name="eclipselink.logging.level.sql" value="FINE" />
