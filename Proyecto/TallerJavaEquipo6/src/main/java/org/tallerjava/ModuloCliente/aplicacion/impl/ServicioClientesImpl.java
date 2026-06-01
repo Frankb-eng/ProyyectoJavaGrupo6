@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.mindrot.jbcrypt.BCrypt;
 import org.tallerjava.ModuloCliente.Interface.evento.out.PublicadorEventoCliente;
 import org.tallerjava.ModuloCliente.Interface.evento.out.PublicadorEventoMedioPago;
+import org.tallerjava.ModuloCliente.Interface.local.InterfaceLocalCliente;
 import org.tallerjava.ModuloCliente.aplicacion.ServicioClientes;
 import org.tallerjava.ModuloCliente.dominio.Cliente;
 import org.tallerjava.ModuloCliente.dominio.ClienteProfesional;
@@ -15,12 +16,13 @@ import org.tallerjava.ModuloCliente.dominio.Reclamo;
 import org.tallerjava.ModuloCliente.dominio.Tarjeta;
 import org.tallerjava.ModuloCliente.dominio.repositorio.ClienteRepositorio;
 
+
 import java.util.List;
 
 
 @ApplicationScoped
 @Transactional
-public class ServicioClientesImpl implements ServicioClientes {
+public class ServicioClientesImpl implements ServicioClientes, InterfaceLocalCliente {
 
     @Inject
     ClienteRepositorio clienteRepositorio;
