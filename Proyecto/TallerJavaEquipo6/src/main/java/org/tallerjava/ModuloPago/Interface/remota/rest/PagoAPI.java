@@ -1,5 +1,7 @@
 package org.tallerjava.ModuloPago.Interface.remota.rest;
 
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -14,6 +16,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@DenyAll
+// por defecto ningun endpoint es accesible
+// cada metodo debe declarar explicitamente quien puede acceder
 @Path("/pagos")
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -25,18 +30,14 @@ public class PagoAPI {
 
     @GET
     @Path("/{cedula}/listarPagos")
+    @RolesAllowed("CLIENTE") // endpoint de App Movil, requiere autenticacion
     public Response consultarPagos(
             @PathParam("cedula") String cedula,
             @QueryParam("fechaIni") String fechaIni,
             @QueryParam("fechaFin") String fechaFin) {
-
-            LocalDate ini = LocalDate.parse(fechaIni);
-            LocalDate fin = LocalDate.parse(fechaFin);
-
-            List<Pago> pagos = servicioPago.consultarPagos(cedula, ini, fin);
-
+        LocalDate ini = LocalDate.parse(fechaIni);
+        LocalDate fin = LocalDate.parse(fechaFin);
+        List<Pago> pagos = servicioPago.consultarPagos(cedula, ini, fin);
         return Response.ok(pagos).build();
     }
-
-
 }
