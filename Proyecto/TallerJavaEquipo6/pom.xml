@@ -42,7 +42,7 @@
 			<version>0.4</version>
 		</dependency>
 
-		<!-- se agrego dependencia de Jakarta Security -->
+<!-- se agrego dependencia de Jakarta Security -->
 		<dependency>
 			<groupId>jakarta.security.enterprise</groupId>
 			<artifactId>jakarta.security.enterprise-api</artifactId>
@@ -50,11 +50,19 @@
 			<version>3.0.0</version>
 		</dependency>
 
-		<!--se agrego dependencia de Rate Limiter - Token Bucket -->
+		<!-- se agrego dependencia de Rate Limiter - Token Bucket -->
 		<dependency>
 			<groupId>com.bucket4j</groupId>
 			<artifactId>bucket4j-core</artifactId>
 			<version>8.10.1</version>
+		</dependency>
+
+		<!-- dependencia para consumir APIs REST externas -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
+			<version>6.2.4.Final</version>
+			<scope>provided</scope>
 		</dependency>
 
 
@@ -62,6 +70,7 @@
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-shaded</artifactId>
 			<version>${weld.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -158,7 +167,7 @@
 						<command>/subsystem=undertow/application-security-domain=other:write-attribute(name=integrated-jaspi,value=false)</command>
 						<command>reload</command>
 					</commands>
-					
+
 					<add-user>
 
 						<users>

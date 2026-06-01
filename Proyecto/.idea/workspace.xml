@@ -5,19 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6cbcf4ee-834f-45a6-9eec-9381b5f47de5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloCliente/dominio/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloCliente/dominio/Cliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/PagoAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/PagoAPI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/dto/PagoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/remota/rest/dto/PagoDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/aplicacion/ServicioPago.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/aplicacion/ServicioPago.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/local/InterfaceLocalPago.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/Interface/local/InterfaceLocalPago.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/aplicacion/impl/ServicioPagoImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/aplicacion/impl/ServicioPagoImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/EstadoPago.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/EstadoPago.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/Pago.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/Pago.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/repositorio/PagoRepositorio.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/dominio/repositorio/PagoRepositorio.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/infraestructura/persistencia/PagoRepositorioImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/TallerJavaEquipo6/src/main/java/org/tallerjava/ModuloPago/infraestructura/persistencia/PagoRepositorioImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,20 +36,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "project.structure.last.edited": "Global Libraries",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Francisco&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Global Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

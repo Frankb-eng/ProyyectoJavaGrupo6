@@ -7,6 +7,10 @@ import jakarta.transaction.Transactional;
 import org.tallerjava.ModuloCarga.dominio.ClienteCarga;
 import org.tallerjava.ModuloCarga.dominio.repositorio.ClienteCargaRepositorio;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 @ApplicationScoped
 @Transactional
 public class ClienteCargaRepositorioImpl implements ClienteCargaRepositorio {
@@ -15,12 +19,12 @@ public class ClienteCargaRepositorioImpl implements ClienteCargaRepositorio {
     private EntityManager em;
 
     @Override
-    public void guardar(ClienteCarga clienteCarga) {
-        em.persist(clienteCarga);
+    public void guardar(ClienteCarga cliente) {
+        em.merge(cliente);
     }
 
     @Override
-    public ClienteCarga buscarPorCedula(String cedula) {
-        return em.find(ClienteCarga.class, cedula);
+    public Optional<ClienteCarga> findById(String cedula) {
+        return Optional.ofNullable(em.find(ClienteCarga.class, cedula));
     }
 }
