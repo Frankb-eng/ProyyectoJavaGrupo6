@@ -42,6 +42,21 @@
 			<version>0.4</version>
 		</dependency>
 
+		<!-- se agrego dependencia de Jakarta Security -->
+		<dependency>
+			<groupId>jakarta.security.enterprise</groupId>
+			<artifactId>jakarta.security.enterprise-api</artifactId>
+			<scope>provided</scope>
+			<version>3.0.0</version>
+		</dependency>
+
+		<!--se agrego dependencia de Rate Limiter - Token Bucket -->
+		<dependency>
+			<groupId>com.bucket4j</groupId>
+			<artifactId>bucket4j-core</artifactId>
+			<version>8.10.1</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
@@ -138,6 +153,12 @@
 				<configuration>
 					<version>${wildfly.version}</version>
 					<server-config>standalone-full.xml</server-config>
+
+					<commands>
+						<command>/subsystem=undertow/application-security-domain=other:write-attribute(name=integrated-jaspi,value=false)</command>
+						<command>reload</command>
+					</commands>
+					
 					<add-user>
 
 						<users>
