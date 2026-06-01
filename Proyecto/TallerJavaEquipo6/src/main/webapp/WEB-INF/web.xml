@@ -10,4 +10,10 @@
 		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
 
+	<!-- Obligatiorio para que RESTEasy entienda las anotaciones de Jakarta Security -->
+	<context-param>
+        <param-name>resteasy.role.based.security</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
 </web-app>
