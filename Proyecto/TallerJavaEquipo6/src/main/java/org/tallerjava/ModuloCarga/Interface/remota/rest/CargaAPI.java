@@ -1,5 +1,8 @@
 package org.tallerjava.ModuloCarga.Interface.remota.rest;
 
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -9,10 +12,14 @@ import org.tallerjava.ModuloCarga.aplicacion.ServicioCarga;
 import org.tallerjava.ModuloCarga.dominio.Carga;
 import org.tallerjava.ModuloCarga.dominio.EstacionCarga;
 import org.tallerjava.ModuloCarga.Interface.remota.rest.dto.*;
+import org.tallerjava.seguridad.RateLimiter;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@DenyAll
+// buena practica: por defecto ningun endpoint es accesible
+// cada metodo debe declarar explicitamente quien puede acceder
 @ApplicationScoped
 @Path("/cargas")
 @Produces(MediaType.APPLICATION_JSON)
@@ -22,11 +29,12 @@ public class CargaAPI {
     @Inject
     ServicioCarga servicioCarga;
 
-    // curl -X POST http://localhost:8080/TallerJavaEquipo6/api/cargas/estaciones
-    // -H "Content-Type: application/json"
-    // -d '{"descripcion":"Estacion Centro","calle":"18 de Julio","departamento":"Montevideo","longitud":-34,"latitud":-56}'
+    @Inject
+    RateLimiter rateLimiter;
+
     @POST
     @Path("/estaciones")
+    @PermitAll // endpoint del Gestor Web, acceso publico
     public Response altaEstacion(EstacionDTO dto) {
         try {
             EstacionCarga estacion = dto.build();
@@ -37,19 +45,17 @@ public class CargaAPI {
         }
     }
 
-    // curl -X GET http://localhost:8080/TallerJavaEquipo6/api/cargas/estaciones
     @GET
     @Path("/estaciones")
+    @PermitAll // endpoint del Gestor Web, acceso publico
     public Response obtenerEstaciones() {
         List<EstacionCarga> estaciones = servicioCarga.obtenerEstaciones();
         return Response.ok(estaciones).build();
     }
 
-    // curl -X POST http://localhost:8080/TallerJavaEquipo6/api/cargas/cargadores
-    // -H "Content-Type: application/json"
-    // -d '{"idEstacion":1,"tipo":"RAPIDO","tieneCable":true,"tipoConector":"TIPO2","potenciaMinima":22}'
     @POST
     @Path("/cargadores")
+    @PermitAll // endpoint del Gestor Web, acceso publico
     public Response altaCargador(CargadorDTO dto) {
         try {
             long id = servicioCarga.altaCargador(dto.getIdEstacion(), dto.build());
@@ -59,11 +65,9 @@ public class CargaAPI {
         }
     }
 
-    // curl -X POST http://localhost:8080/TallerJavaEquipo6/api/cargas/iniciar
-    // -H "Content-Type: application/json"
-    // -d '{"cedulaCliente":"12345678","idCargador":1,"idMedioPago":1}'
     @POST
     @Path("/iniciar")
+    @RolesAllowed("CLIENTE") // endpoint de App Movil, requiere autenticacion
     public Response iniciarCarga(IniciarCargaDTO dto) {
         try {
             long idCarga = servicioCarga.iniciarCarga(
@@ -74,11 +78,9 @@ public class CargaAPI {
         }
     }
 
-    // curl -X POST http://localhost:8080/TallerJavaEquipo6/api/cargas/finalizar
-    // -H "Content-Type: application/json"
-    // -d '{"idCargador":1,"consumoKwh":15.5,"minutosDemora":0}'
     @POST
     @Path("/finalizar")
+    @RolesAllowed("CLIENTE") // endpoint de App Movil, requiere autenticacion
     public Response finalizarCarga(FinalizarCargaDTO dto) {
         try {
             servicioCarga.finalizarCarga(dto.getIdCargador(), dto.getConsumoKwh(), dto.getMinutosDemora());
@@ -88,9 +90,9 @@ public class CargaAPI {
         }
     }
 
-    // curl -X GET "http://localhost:8080/TallerJavaEquipo6/api/cargas/activa?cedulaCliente=12345678"
     @GET
     @Path("/activa")
+    @RolesAllowed("CLIENTE") // endpoint de App Movil, requiere autenticacion
     public Response verCargaActual(@QueryParam("cedulaCliente") String cedulaCliente) {
         try {
             Carga carga = servicioCarga.verCargaActual(cedulaCliente);
@@ -104,13 +106,21 @@ public class CargaAPI {
         }
     }
 
-    // curl -X GET "http://localhost:8080/TallerJavaEquipo6/api/cargas/historico?cedulaCliente=12345678&fechaIni=2026-01-01&fechaFin=2026-12-31"
     @GET
     @Path("/historico")
+    @RolesAllowed("CLIENTE") // endpoint de App Movil, requiere autenticacion
     public Response verHistorico(
             @QueryParam("cedulaCliente") String cedulaCliente,
             @QueryParam("fechaIni") String fechaIni,
             @QueryParam("fechaFin") String fechaFin) {
+
+        // verificar rate limit antes de procesar
+        if (!rateLimiter.consumir()) {
+            return Response.status(429)
+                    .entity("Limite de consultas excedido. Intente nuevamente en unos segundos.")
+                    .build();
+        }
+
         try {
             List<Carga> historico = servicioCarga.verHistorico(
                     cedulaCliente,
