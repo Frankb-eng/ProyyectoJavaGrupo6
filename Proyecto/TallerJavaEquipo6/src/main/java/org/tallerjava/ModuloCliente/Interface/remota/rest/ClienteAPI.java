@@ -7,8 +7,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import java.util.*;
+
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+
+
 import org.tallerjava.ModuloCliente.aplicacion.ServicioClientes;
 import org.tallerjava.ModuloCliente.dominio.Cliente;
 import org.tallerjava.ModuloCliente.dominio.MedioPago;
@@ -25,6 +30,9 @@ public class ClienteAPI {
 
     @Inject
     ServicioClientes servicioClientes;
+
+    @Context
+    private SecurityContext securityContext;
 
     @POST
     @Path("/registrar")
@@ -43,6 +51,16 @@ public class ClienteAPI {
     @Path("/{cedula}/medioPago")
     @RolesAllowed("CLIENTE") // endpoint de App Movil, requiere autenticacion
     public Response agregarMedioPago(@PathParam("cedula") String cedula, MedioPagoDTO dto) {
+
+        final String cedulaAutenticada = securityContext.getUserPrincipal().getName();
+
+        // verificamos que sea el mismo que el del path
+        if (!cedulaAutenticada.equals(cedula)) {
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("No tiene permiso para hacer esto")
+                    .build();
+        }
+
         try {
             MedioPago medioPago = dto.build();
             servicioClientes.altaMedioPago(cedula, medioPago);
@@ -67,6 +85,14 @@ public class ClienteAPI {
     @Path("/{cedula}/reclamos")
     @RolesAllowed("CLIENTE") // endpoint de App Movil, requiere autenticacion
     public Response realizarReclamo(@PathParam("cedula") String cedula, ReclamoDTO dto) {
+        final String cedulaAutenticada = securityContext.getUserPrincipal().getName();
+        if (!cedulaAutenticada.equals(cedula)) {
+            return Response.status(Response.Status.FORBIDDEN).entity("No tiene permiso para hacer esto").build();
+                            
+        }
+        
+        
+        
         try {
             servicioClientes.realizarReclamo(cedula, dto.getComentario());
             return Response.status(Response.Status.CREATED).entity("Reclamo registrado correctamente").build();

@@ -13,7 +13,8 @@ import org.tallerjava.ModuloCarga.dominio.Carga;
 import org.tallerjava.ModuloCarga.dominio.EstacionCarga;
 import org.tallerjava.ModuloCarga.Interface.remota.rest.dto.*;
 import org.tallerjava.seguridad.RateLimiter;
-
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -31,6 +32,9 @@ public class CargaAPI {
 
     @Inject
     RateLimiter rateLimiter;
+
+    @Context
+    private SecurityContext securityContext;
 
     @POST
     @Path("/estaciones")
@@ -69,6 +73,13 @@ public class CargaAPI {
     @Path("/iniciar")
     @RolesAllowed("CLIENTE") // endpoint de App Movil, requiere autenticacion
     public Response iniciarCarga(IniciarCargaDTO dto) {
+
+        final String cedulaAutenticada = securityContext.getUserPrincipal().getName();
+        if (!cedulaAutenticada.equals(dto.getCedulaCliente())) {
+            return Response.status(Response.Status.FORBIDDEN).entity("No tiene permiso para operar sobre este recurso.").build();
+                         
+        }
+
         try {
             long idCarga = servicioCarga.iniciarCarga(
                     dto.getCedulaCliente(), dto.getIdCargador(), dto.getIdMedioPago());
@@ -94,6 +105,15 @@ public class CargaAPI {
     @Path("/activa")
     @RolesAllowed("CLIENTE") // endpoint de App Movil, requiere autenticacion
     public Response verCargaActual(@QueryParam("cedulaCliente") String cedulaCliente) {
+        
+        final String cedulaAutenticada = securityContext.getUserPrincipal().getName();
+        if (!cedulaAutenticada.equals(cedulaCliente)) {
+            return Response.status(Response.Status.FORBIDDEN).entity("No tiene permiso para hacer esto").build();
+                    
+                    
+        }
+        
+        
         try {
             Carga carga = servicioCarga.verCargaActual(cedulaCliente);
             if (carga == null) {
@@ -114,7 +134,15 @@ public class CargaAPI {
             @QueryParam("fechaIni") String fechaIni,
             @QueryParam("fechaFin") String fechaFin) {
 
-        // verificar rate limit antes de procesar
+
+        final String cedulaAutenticada = securityContext.getUserPrincipal().getName();
+        if (!cedulaAutenticada.equals(cedulaCliente)) {
+            return Response.status(Response.Status.FORBIDDEN).entity("No tiene permiso para hacer esto").build();
+                    
+                    
+        }
+
+        // verifica rate limit antes de procesar
         if (!rateLimiter.consumir()) {
             return Response.status(429)
                     .entity("Limite de consultas excedido. Intente nuevamente en unos segundos.")
