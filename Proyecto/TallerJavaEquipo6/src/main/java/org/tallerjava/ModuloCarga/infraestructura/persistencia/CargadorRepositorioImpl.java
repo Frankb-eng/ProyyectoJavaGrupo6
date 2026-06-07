@@ -1,3 +1,4 @@
+package org.tallerjava.ModuloCarga.infraestructura.persistencia;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

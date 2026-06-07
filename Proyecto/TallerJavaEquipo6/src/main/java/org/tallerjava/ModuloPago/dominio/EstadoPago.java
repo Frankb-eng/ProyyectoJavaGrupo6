@@ -5,5 +5,6 @@ public enum EstadoPago {
 
 
     PROSESANDO,
-    COMPLETADO
+    COMPLETADO,
+    RECHAZADO
 }
