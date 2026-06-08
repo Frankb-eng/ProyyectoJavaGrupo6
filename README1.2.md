@@ -852,6 +852,50 @@ curl --user 12345678:clave123 "http://localhost:8080/TallerJavaEquipo6/api/pagos
 ```
 
 ---
+---
+
+### Impacto en el Módulo Pagos — Bloqueo por deuda
+
+La integración con APIPago introdujo una nueva regla de negocio: un cliente con un pago
+rechazado queda **bloqueado** y no puede iniciar nuevas cargas hasta que regularice su
+situación. El mecanismo se implementó en dos capas:
+
+**En `ClientePago`** (dominio de ModuloPago):
+- Se agregó el atributo `bloqueadoPorDeuda: boolean`.
+- `ServicioPagoImpl` lo actualiza a `true` cuando el resultado de APIPago es negativo.
+
+**En `ServicioCargaImpl`** (aplicación de ModuloCarga):
+- Antes de iniciar una carga, se consulta `InterfaceLocalPago.clienteHabilitadoParaCargar(cedula)`.
+- Si retorna `false`, se lanza `IllegalStateException` con el mensaje correspondiente y
+  la API responde `400 BAD REQUEST`.
+
+```
+ModuloCarga                          ModuloPago
+    │                                    │
+    │── clienteHabilitadoParaCargar() ──►│
+    │◄─ false (bloqueadoPorDeuda=true) ──│
+    │
+    └── throw IllegalStateException("Cliente bloqueado por deuda pendiente")
+```
+
+Esta comunicación utiliza la **interfaz local** (`InterfaceLocalPago`) y no un evento CDI,
+dado que el resultado es necesario sincrónicamente para decidir si se permite o no la
+operación.
+
+---
+
+### Consideración sobre la disponibilidad de APIPago
+
+El sistema fue diseñado para degradarse de forma segura (*fail-safe*) ante la ausencia
+del mock externo. Si APIPago no está desplegado, `ServicioPagoImpl` captura la excepción
+de red, registra un aviso en el log de WildFly y persiste el pago como `RECHAZADO`.
+Esto significa que **las pruebas del core del negocio pueden realizarse sin APIPago**,
+obteniendo siempre pagos rechazados, lo que permite verificar el bloqueo de clientes
+sin necesidad de levantar el segundo artefacto.
+
+---
+
+*Documentación para la Iteración 2 — Taller Java 2026,
 
 ##Pagos — API REST App Novil
 
