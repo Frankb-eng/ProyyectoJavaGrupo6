@@ -19,7 +19,7 @@
 
 ### Iteración 2
 - [Seguridad — API REST App Móvil](#seguridad--api-rest-app-móvil)
-- [Pagos — API REST App Novil](#pagos--api-rest-app-móvil)
+- [Pagos — API REST App Movil](#pagos--api-rest-app-móvil)
 
 ---
 
@@ -853,7 +853,7 @@ curl --user 12345678:clave123 "http://localhost:8080/TallerJavaEquipo6/api/pagos
 
 ---
 
-###Pagos — API REST App Novil
+##Pagos — API REST App Movil
 
 En esta iteracion se ha simulado el llamar an sistena de pagos de externo (i.e un banco), que tiene la capacidad de rechazar algunos pagos.
 
