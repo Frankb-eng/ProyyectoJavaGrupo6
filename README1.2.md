@@ -897,7 +897,7 @@ sin necesidad de levantar el segundo artefacto.
 
 *Documentación para la Iteración 2 — Taller Java 2026,
 
-##Pagos — API REST App Movil
+### Pagos — API REST App Movil
 
 En esta iteracion se ha simulado el llamar an sistena de pagos de externo (i.e un banco), que tiene la capacidad de rechazar algunos pagos.
 
