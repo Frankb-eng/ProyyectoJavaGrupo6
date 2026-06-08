@@ -853,7 +853,7 @@ curl --user 12345678:clave123 "http://localhost:8080/TallerJavaEquipo6/api/pagos
 
 ---
 
-##Pagos — API REST App Novil
+###Pagos — API REST App Novil
 
 En esta iteracion se ha simulado el llamar an sistena de pagos de externo (i.e un banco), que tiene la capacidad de rechazar algunos pagos.
 
