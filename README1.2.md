@@ -895,10 +895,32 @@ sin necesidad de levantar el segundo artefacto.
 
 ---
 
-*Documentación para la Iteración 2 — Taller Java 2026,
 
 ### Pagos — API REST App Movil
 
 En esta iteracion se ha simulado el llamar an sistena de pagos de externo (i.e un banco), que tiene la capacidad de rechazar algunos pagos.
 
 *Documentación para la Iteración 2 — Taller Java 2026, UTEC Maldonado.*
+
+---
+
+### Stack de Observabilidad
+
+Imagen: philhawthorne/docker-influxdb-grafana
+   - InfluxDB  1.8.2  → puerto 8086
+   - Grafana   7.2.0  → puerto 3003
+   - Chronograf 1.8.6 → puerto 3004 (interfaz web de InfluxDB, opcional)
+
+ Uso:
+   Levantar:  docker compose up -d
+   Detener:   docker compose down
+   Logs:      docker compose logs -f
+
+ Accesos:
+   Grafana:    http://localhost:3003   (root / root)
+   Chronograf: http://localhost:3004   (root / root)
+   InfluxDB:   http://localhost:8086
+
+ IMPORTANTE: La primera vez que se levanta el contenedor, ejecutar el
+ script de inicializacion para crear la base de datos de metricas:
+   docker exec observabilidad influx -execute "CREATE DATABASE metricasTallerJava"
