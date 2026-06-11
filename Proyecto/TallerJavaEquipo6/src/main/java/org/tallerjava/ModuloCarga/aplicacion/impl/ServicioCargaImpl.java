@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.jboss.logging.Logger;
+import org.tallerjava.ModuloCarga.Interface.evento.out.PublicadorEventoCarga;
 import org.tallerjava.ModuloCarga.aplicacion.ServicioCarga;
 import org.tallerjava.ModuloCarga.dominio.Carga;
 import org.tallerjava.ModuloCarga.dominio.Cargador;
@@ -44,6 +45,9 @@ public class ServicioCargaImpl implements ServicioCarga {
     @Inject
     InterfaceLocalPago interfaceLocalPago;
 
+    @Inject
+    private PublicadorEventoCarga publicadorEventoCarga;
+    //para los publicadores de eventos que se lanzaran hacia el modulo monitoreo
 
     @Override
     @Transactional
@@ -89,6 +93,10 @@ public class ServicioCargaImpl implements ServicioCarga {
 
         log.infof("Carga iniciada: cliente=%s, cargador=%d, idCarga=%d",
                 cedulaCliente, idCargador, carga.getIdCarga());
+
+        publicadorEventoCarga.publicarCargaIniciada();
+        // avisa al modulo de monitoreo que se inicio una carga
+        // incrementa el contador de cargas activas en InfluxDB
 
         return carga.getIdCarga();
     }
@@ -148,6 +156,10 @@ public class ServicioCargaImpl implements ServicioCarga {
             log.infof("Carga finalizada y pago procesado correctamente: idCarga=%d",
                     carga.getIdCarga());
         }
+
+        publicadorEventoCarga.publicarCargaFinalizada();
+        // avisa al modulo de monitoreo que se finalizo una carga
+        // incrementa cargas realizadas y decrementa cargas activas en InfluxDB
     }
 
     @Override
