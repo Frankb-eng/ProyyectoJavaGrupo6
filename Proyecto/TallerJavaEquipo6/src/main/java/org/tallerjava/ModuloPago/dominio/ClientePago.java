@@ -15,6 +15,9 @@ public class ClientePago {
     @Column(nullable = false)
     private String tipo;   // COMUN o PROFESIONAL
 
+    @Column(nullable = false)
+    private boolean bloqueadoPorDeuda = false;
+
     public ClientePago() {}
 
     public ClientePago(String cedula, String nombre, String tipo) {
@@ -29,4 +32,8 @@ public class ClientePago {
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
+    public boolean isBloqueadoPorDeuda() { return bloqueadoPorDeuda; }
+    public void setBloqueadoPorDeuda(boolean bloqueadoPorDeuda) {
+        this.bloqueadoPorDeuda = bloqueadoPorDeuda;
+    }
 }

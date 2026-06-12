@@ -11,6 +11,10 @@ public class EventoCargaFinalizada {
         this.importe = importe;
     }
 
+     public EventoCargaFinalizada() {} // constructor vacio — usado por el modulo de monitoreo
+    // que solo necesita saber que ocurrio, no los datos
+
+    
     public long getIdCarga() {
         return idCarga;
     }
