@@ -26,6 +26,8 @@ public class RegistradorDeMetricas {
     // una sola instancia compartida — se crea una vez y se reutiliza siempre
 
     private final AtomicInteger cargasActivas = new AtomicInteger(0);
+    private final AtomicInteger pagosTarjeta = new AtomicInteger(0);
+    private final AtomicInteger erroresTarjeta = new AtomicInteger(0);
 
     @PostConstruct
     public void init() {
@@ -55,6 +57,9 @@ public class RegistradorDeMetricas {
 
         Gauge.builder(CARGAS_ACTIVAS, cargasActivas, AtomicInteger::get)
          .register(meterRegistry);
+
+        Gauge.builder(PAGOS_TARJETA, pagosTarjeta, AtomicInteger::get).register(meterRegistry);
+        Gauge.builder(ERRORES_TARJETA, erroresTarjeta, AtomicInteger::get).register(meterRegistry);
     }
 
 
@@ -78,6 +83,15 @@ public class RegistradorDeMetricas {
         cargasActivas.decrementAndGet();
         // -1 cuando se finaliza una carga
 }
+    public void pagosAprovadosTargeta() {
+        pagosTarjeta.incrementAndGet();
+        // +1 cuando se realiza un pago con targeta
+    }
+
+    public void pagosRechazadosTargeta() {
+        erroresTarjeta.incrementAndGet();
+        // +1 cuando se rechaza un pago con targeta
+    }
 
     /*public void decrementarCounter(String nombreCounter) {
         meterRegistry.counter(nombreCounter).increment(-1);
