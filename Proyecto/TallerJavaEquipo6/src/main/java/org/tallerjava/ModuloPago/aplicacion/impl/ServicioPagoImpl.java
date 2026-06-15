@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.tallerjava.ModuloCliente.dominio.Cliente;
 import org.tallerjava.ModuloCliente.dominio.repositorio.ClienteRepositorio;
+import org.tallerjava.ModuloPago.Interface.evento.out.PublicadorEventoPagoRealizado;
 import org.tallerjava.ModuloPago.Interface.local.InterfaceLocalPago;
 import org.tallerjava.ModuloPago.Interface.remota.rest.dto.NotificacionDTO;
 import org.tallerjava.ModuloPago.aplicacion.ServicioPago;
@@ -41,6 +42,9 @@ public class ServicioPagoImpl implements ServicioPago, InterfaceLocalPago
 
     @Inject
     ClientePagoRepositorio clientePagoRepositorio;
+
+    @Inject
+    PublicadorEventoPagoRealizado publicadorEventoPagoRealizado;
 
     private static final Logger log = Logger.getLogger(ServicioPagoImpl.class);
 
@@ -92,7 +96,19 @@ public class ServicioPagoImpl implements ServicioPago, InterfaceLocalPago
 
     public boolean pagarCarga(String cedula, int importe, Long idMedioPago){
         Pago pago = new Pago(cedula,importe,idMedioPago);
-        return this.altaPago(cedula, pago);
+
+        boolean pagoAprobado = this.altaPago(cedula, pago);
+
+        if (pagoAprobado) {
+            publicadorEventoPagoRealizado.publicarPagoAceptado();
+            System.out.println("Pago exitoso");
+        } else {
+            publicadorEventoPagoRealizado.publicarPagoRechazado();
+            System.out.println("Pago rechazado");
+        }
+
+        return pagoAprobado;
+
     }
 
     @Override
