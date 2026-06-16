@@ -94,21 +94,19 @@ public class ServicioPagoImpl implements ServicioPago, InterfaceLocalPago
 
     public List<Pago> consultarPagos(String cedula, LocalDate fechaIni, LocalDate fechaFin){ return pagoRepositorio.listarPagosPorCedulaYFechas(cedula,fechaIni,fechaFin); }
 
-    public boolean pagarCarga(String cedula, int importe, Long idMedioPago){
-        Pago pago = new Pago(cedula,importe,idMedioPago);
+    public boolean pagarCarga(String cedula, int importe, Long idMedioPago) {
+        Pago pago = new Pago(cedula, importe, idMedioPago);
+        MedioPagoPago mpp = medioPagoPagoRepositorio.buscarPorIdMedioPago(idMedioPago);
 
         boolean pagoAprobado = this.altaPago(cedula, pago);
 
         if (pagoAprobado) {
-            publicadorEventoPagoRealizado.publicarPagoAceptado();
-            System.out.println("Pago exitoso");
+            publicadorEventoPagoRealizado.publicarPagoAceptado(mpp.getTipoMedioPago());
         } else {
             publicadorEventoPagoRealizado.publicarPagoRechazado();
-            System.out.println("Pago rechazado");
         }
 
         return pagoAprobado;
-
     }
 
     @Override

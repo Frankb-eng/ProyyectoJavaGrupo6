@@ -3,7 +3,7 @@ package org.tallerjava.ModuloCarga.dominio;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "cargas_clientes")
+@Table(name = "cargas_cliente")
 public class ClienteCarga {
 
     @Id

@@ -16,7 +16,6 @@
 7. [Módulo Pagos](#módulo-pagos)
 8. [Comunicación entre Módulos](#comunicación-entre-módulos)
 
----
 
 ## Descripción General
 
