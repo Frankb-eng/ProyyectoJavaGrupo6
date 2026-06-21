@@ -1,0 +1,39 @@
+# =============================================================================
+# Stack de Observabilidad — Taller Java Equipo 6
+# =============================================================================
+# Imagen: philhawthorne/docker-influxdb-grafana
+#   - InfluxDB  1.8.2  → puerto 8086
+#   - Grafana   7.2.0  → puerto 3003
+#   - Chronograf 1.8.6 → puerto 3004 (interfaz web de InfluxDB, opcional)
+#
+# Uso:
+#   Levantar:  docker compose up -d
+#   Detener:   docker compose down
+#   Logs:      docker compose logs -f
+#
+# Accesos:
+#   Grafana:    http://localhost:3003   (root / root)
+#   Chronograf: http://localhost:3004   (root / root)
+#   InfluxDB:   http://localhost:8086
+#
+# IMPORTANTE: La primera vez que se levanta el contenedor, ejecutar el
+# script de inicializacion para crear la base de datos de metricas:
+#   docker exec observabilidad influx -execute "CREATE DATABASE metricasTallerJava"
+# =============================================================================
+
+services:
+  observabilidad:
+    image: philhawthorne/docker-influxdb-grafana:latest
+    container_name: observabilidad
+    restart: unless-stopped
+    ports:
+      - "3003:3003"   # Grafana
+      - "3004:8083"   # Chronograf (interfaz web InfluxDB)
+      - "8086:8086"   # InfluxDB API
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  influxdb_data:
+  grafana_data:
