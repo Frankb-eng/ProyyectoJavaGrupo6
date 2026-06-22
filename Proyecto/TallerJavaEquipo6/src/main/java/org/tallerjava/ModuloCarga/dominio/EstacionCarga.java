@@ -1,7 +1,7 @@
 package org.tallerjava.ModuloCarga.dominio;
 import jakarta.persistence.*;
 @Entity
-@Table(name = "estaciones_carga")
+@Table(name = "cargas_estacion")
 public class EstacionCarga {
     //atributos
     @Id
