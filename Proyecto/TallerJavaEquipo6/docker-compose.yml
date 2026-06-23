@@ -1,10 +1,14 @@
 # =============================================================================
-# Stack de Observabilidad — Taller Java Equipo 6
+# Stack de Observabilidad y LLM — Taller Java Equipo 6
 # =============================================================================
 # Imagen: philhawthorne/docker-influxdb-grafana
 #   - InfluxDB  1.8.2  → puerto 8086
 #   - Grafana   7.2.0  → puerto 3003
 #   - Chronograf 1.8.6 → puerto 3004 (interfaz web de InfluxDB, opcional)
+#
+# Imagen: ollama/ollama (Iteracion 4 - Messaging)
+#   - Ollama → puerto 11434, sirve el modelo Llama2 usado para clasificar
+#     el sentimiento de los reclamos (ver ClasificadorSentimientoLlamaClient)
 #
 # Uso:
 #   Levantar:  docker compose up -d
@@ -15,10 +19,15 @@
 #   Grafana:    http://localhost:3003   (root / root)
 #   Chronograf: http://localhost:3004   (root / root)
 #   InfluxDB:   http://localhost:8086
+#   Ollama:     http://localhost:11434
 #
 # IMPORTANTE: La primera vez que se levanta el contenedor, ejecutar el
 # script de inicializacion para crear la base de datos de metricas:
 #   docker exec observabilidad influx -execute "CREATE DATABASE metricasTallerJava"
+#
+# IMPORTANTE: La primera vez que se levanta el contenedor de Ollama, hay que
+# descargar el modelo Llama2 (pesa varios GB, puede demorar bastante):
+#   docker exec ollama ollama pull llama2
 # =============================================================================
 
 services:
@@ -34,6 +43,16 @@ services:
       - influxdb_data:/var/lib/influxdb
       - grafana_data:/var/lib/grafana
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"   # API de Ollama, consumida por ClasificadorSentimientoLlamaClient
+    volumes:
+      - ollama_data:/root/.ollama
+
 volumes:
   influxdb_data:
   grafana_data:
+  ollama_data:

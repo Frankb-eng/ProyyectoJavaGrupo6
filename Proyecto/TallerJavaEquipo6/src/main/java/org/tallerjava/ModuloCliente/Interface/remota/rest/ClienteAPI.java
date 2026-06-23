@@ -88,14 +88,34 @@ public class ClienteAPI {
         final String cedulaAutenticada = securityContext.getUserPrincipal().getName();
         if (!cedulaAutenticada.equals(cedula)) {
             return Response.status(Response.Status.FORBIDDEN).entity("No tiene permiso para hacer esto").build();
-                            
+
         }
-        
-        
-        
+
+
+
         try {
             servicioClientes.realizarReclamo(cedula, dto.getComentario());
             return Response.status(Response.Status.CREATED).entity("Reclamo registrado correctamente").build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+    }
+
+    // ENDPOINT TEMPORAL — Iteracion 4, solo para el benchmark JMeter que compara
+    // el flujo sincronico contra el flujo asincronico (ver realizarReclamo).
+    // Se elimina una vez completado el analisis de carga.
+    @POST
+    @Path("/{cedula}/reclamos/sincro")
+    @RolesAllowed("CLIENTE")
+    public Response realizarReclamoSincro(@PathParam("cedula") String cedula, ReclamoDTO dto) {
+        final String cedulaAutenticada = securityContext.getUserPrincipal().getName();
+        if (!cedulaAutenticada.equals(cedula)) {
+            return Response.status(Response.Status.FORBIDDEN).entity("No tiene permiso para hacer esto").build();
+        }
+
+        try {
+            servicioClientes.realizarReclamoSincro(cedula, dto.getComentario());
+            return Response.status(Response.Status.CREATED).entity("Reclamo registrado y clasificado correctamente").build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }

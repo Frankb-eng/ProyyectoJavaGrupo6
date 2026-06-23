@@ -15,12 +15,16 @@ public class Reclamo {
     private LocalDateTime fecha;
     private String cedulaCliente;
 
+    @Enumerated(EnumType.STRING)
+    private EstadoReclamo etiqueta;
+
     public Reclamo() {}
 
     public Reclamo(String comentario, String cedulaCliente) {
         this.comentario = comentario;
         this.cedulaCliente = cedulaCliente;
         this.fecha = LocalDateTime.now();
+        this.etiqueta = EstadoReclamo.PENDIENTE;
     }
 
     public Long getId() { return id; }
@@ -34,4 +38,7 @@ public class Reclamo {
 
     public String getCedulaCliente() { return cedulaCliente; }
     public void setCedulaCliente(String cedulaCliente) { this.cedulaCliente = cedulaCliente; }
+
+    public EstadoReclamo getEtiqueta() { return etiqueta; }
+    public void setEtiqueta(EstadoReclamo etiqueta) { this.etiqueta = etiqueta; }
 }
