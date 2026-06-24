@@ -1065,6 +1065,222 @@ docker exec observabilidad influx -execute "SELECT last(value) FROM pagosUTE" -d
 docker exec observabilidad influx -execute "SELECT last(value) FROM erroresTarjeta" -database "metricasTallerJava"
 ```
 
+
+---
 ---
 
-*Documentación para las Iteraciones 1, 2 y 3 — Taller Java 2026, UTEC Maldonado.*
+## Iteración 4 — Mensajería y Clasificación con LLM
+
+> **Taller Java 2026 — UTEC Maldonado**  
+> Iteración 4: Mensajería JMS y procesamiento asíncrono con inteligencia artificial
+
+En esta iteración se incorporó procesamiento asíncrono de reclamos mediante una cola de mensajes JMS y clasificación automática de sentimiento usando un modelo de lenguaje (LLM) corriendo localmente con Ollama/Llama2.
+
+---
+
+### ¿Qué se hizo?
+
+Cuando un cliente envía un reclamo, el servidor responde de inmediato (HTTP 201) y publica un mensaje en una **queue JMS point-to-point**. Un Message-Driven Bean consume esa queue en background, llama al LLM para clasificar el sentimiento del comentario, actualiza la base de datos con la etiqueta resultante (`POSITIVO`, `NEGATIVO` o `NEUTRO`) y dispara un evento CDI que incrementa la métrica de reclamos negativos en Grafana.
+
+Este diseño evita que el cliente espere los ~10-15 segundos que puede tardar el LLM en inferir la clasificación.
+
+---
+
+### Arquitectura de la solución
+
+```
+App Móvil
+    │
+    ▼
+POST /clientes/{cedula}/reclamos
+    │
+    ├── persiste Reclamo (etiqueta=PENDIENTE)
+    ├── responde HTTP 201 al cliente  ← cliente no espera más
+    │
+    └── publica mensaje en ReclamosQueue
+                │
+                ▼ (background, Thread separado)
+        ClasificadorReclamoConsumer (@MessageDriven)
+                │
+                ├── ClasificadorSentimientoLlamaClient
+                │       └── POST http://localhost:11434/api/generate  (Ollama/Llama2)
+                │               └── responde: NEGATIVO / POSITIVO / NEUTRO
+                │
+                ├── actualiza Reclamo.etiqueta en BD
+                │
+                └── PublicadorEventoReclamo
+                        └── ObserverModuloCliente (ModuloMonitoreo)
+                                └── RegistradorDeMetricas.incrementarCounter(RECLAMOS_NEGATIVOS)
+```
+
+---
+
+### Stack tecnológico agregado
+
+| Herramienta | Versión | Rol |
+|---|---|---|
+| ActiveMQ Artemis | embebido en WildFly | Broker JMS — no requiere instalación adicional |
+| Jakarta Messaging (JMS) | 3.1 | API estándar para producir y consumir mensajes |
+| Ollama | latest | Servidor que corre el LLM localmente vía Docker |
+| Llama2 | 7B parámetros | Modelo de lenguaje para clasificar sentimientos |
+
+> **Nota sobre Artemis:** WildFly ya incluye el broker de mensajería ActiveMQ Artemis cuando se usa el perfil `standalone-full.xml` (que el proyecto ya usaba desde la Iteración 3 para Micrometer). No requirió instalación adicional, solo la creación de la queue en `config.cli`.
+
+---
+
+### Cambios en el dominio — `Reclamo`
+
+Se agregó el campo `etiqueta` de tipo `EstadoReclamo`:
+
+```java
+public enum EstadoReclamo {
+    PENDIENTE,  
+    POSITIVO,
+    NEGATIVO,
+    NEUTRO   
+}
+```
+
+```java
+@Enumerated(EnumType.STRING)
+private EstadoReclamo etiqueta;
+
+public Reclamo(String comentario, String cedulaCliente) {
+    this.comentario = comentario;
+    this.cedulaCliente = cedulaCliente;
+    this.fecha = LocalDateTime.now();
+    this.etiqueta = EstadoReclamo.PENDIENTE; // siempre arranca pendiente
+}
+```
+
+
+
+---
+
+### Archivos nuevos
+
+| Archivo | Descripción |
+|---|---|
+| `ModuloCliente/dominio/EstadoReclamo.java` | Enum con los estados posibles de clasificación |
+| `ModuloCliente/dominio/repositorio/ReclamoRepositorio.java` | Interfaz de repositorio dedicado a `Reclamo` (independiente del agregado `Cliente`) |
+| `ModuloCliente/infraestructura/persistencia/ReclamoRepositorioImpl.java` | Implementación con `@Transactional(REQUIRES_NEW)` |
+| `ModuloCliente/infraestructura/messaging/ReclamoMessage.java` | Record que representa el mensaje en la queue, con serialización JSON usando `jakarta.json` |
+| `ModuloCliente/infraestructura/messaging/EnviarReclamoQueueUtil.java` | Producer JMS — publica mensajes en la queue |
+| `ModuloCliente/infraestructura/messaging/ClasificadorReclamoConsumer.java` | Consumer JMS (`@MessageDriven`) — procesa mensajes en background |
+| `ModuloCliente/infraestructura/llm/ClasificadorSentimientoLlamaClient.java` | Cliente HTTP hacia Ollama/Llama2 |
+| `ModuloCliente/Interface/evento/out/EventoReclamoClasificado.java` | Evento CDI disparado al clasificar un reclamo |
+| `ModuloCliente/Interface/evento/out/PublicadorEventoReclamo.java` | Publica el evento hacia `ModuloMonitoreo` |
+| `ModuloMonitoreo/Interface/evento/in/ObserverModuloCliente.java` | Escucha el evento e incrementa `reclamosNegativos` si aplica |
+
+### Archivos modificados
+
+| Archivo | Qué cambió |
+|---|---|
+| `config.cli` | Se agrega `jms-queue add` para crear `ReclamosQueue` en Artemis al arrancar |
+| `ModuloCliente/dominio/Reclamo.java` | Se agrega campo `etiqueta` de tipo `EstadoReclamo` |
+| `ModuloCliente/aplicacion/ServicioClientes.java` | Se agrega `clasificarReclamo()` y `realizarReclamoSincro()` |
+| `ModuloCliente/aplicacion/impl/ServicioClientesImpl.java` | `realizarReclamo()` publica a la queue; nuevos métodos de clasificación |
+| `ModuloMonitoreo/infraestructura/RegistradorDeMetricas.java` | Se agrega métrica `reclamosNegativos`; se eliminó `forzarPush()` por problema de concurrencia |
+| `docker-compose.yml` | Se agrega el servicio `ollama` con volumen persistente |
+
+---
+
+### Decisiones de diseño relevantes
+
+**`@Transactional(NOT_SUPPORTED)` en `clasificarReclamo()`**
+
+La clase `ServicioClientesImpl` tiene `@Transactional` a nivel de clase (propagación `REQUIRED`). Si `clasificarReclamo()` heredara esa transacción, la transacción JTA quedaría abierta durante toda la duración de la llamada al LLM (potencialmente varios minutos), manteniendo locks de fila innecesarios y arriesgando un timeout de transacción (WildFly usa 300 segundos por defecto). Con `NOT_SUPPORTED` la transacción se suspende durante la llamada al LLM; `ReclamoRepositorioImpl` abre sus propias transacciones cortas con `REQUIRES_NEW` cuando necesita leer o escribir.
+
+`Reclamo` es parte del agregado `Cliente` en términos de JPA (`@OneToMany`). Sin embargo, el consumer JMS solo necesita buscar y actualizar un `Reclamo` específico por su ID, sin necesidad de cargar todo el agregado `Cliente`. Crear un repositorio dedicado para `Reclamo` es más eficiente y no viola la intención del agregado — simplemente provee un acceso directo para el caso de uso puntual del consumer.
+
+**Mensajes serializados con `jakarta.json` (JSON-P)**
+
+**Fallback a `PENDIENTE` ante fallas del LLM**
+
+Si Ollama no está disponible, responde con error, tarda demasiado (timeout de 5 minutos), o su respuesta no puede interpretarse, el reclamo queda con etiqueta `PENDIENTE`. Esto permite identificar reclamos que necesitan reintento y evita que un fallo del LLM deje el reclamo en un estado inválido.
+
+---
+
+### Métrica agregada
+
+| Métrica | Descripción | Producida por |
+|---|---|---|
+| `reclamosNegativos` | Total acumulado de reclamos clasificados como negativos por el LLM | `ObserverModuloCliente` |
+
+---
+
+### Configurar Ollama (primera vez)
+
+Ollama se levanta junto con el stack de observabilidad mediante Docker Compose. La primera vez hay que descargar el modelo (pesa ~4 GB):
+
+```powershell
+# Levantar el stack completo (observabilidad + Ollama)
+docker compose up -d
+
+# Descargar el modelo Llama2 (solo la primera vez)
+docker exec ollama ollama pull llama2
+```
+
+El modelo queda guardado en el volumen `ollama_data` y no se pierde al reiniciar el contenedor.
+
+**Verificar que Ollama responde:**
+```powershell
+Invoke-RestMethod -Uri "http://localhost:11434/api/generate" `
+  -Method Post -ContentType "application/json" `
+  -Body '{"model":"llama2","prompt":"responde solo NEGATIVO","stream":false}'
+```
+
+---
+
+### Endpoints nuevos
+
+| Método | URL | Body | Respuesta | Descripción |
+|--------|-----|------|-----------|-------------|
+| `POST` | `/api/clientes/{cedula}/reclamos` | `ReclamoDTO` | `201` | Ya existía. Ahora además publica en la queue para clasificación asíncrona |
+| `POST` | `/api/clientes/{cedula}/reclamos/sincro` | `ReclamoDTO` | `201` | **Temporal** — mismo flujo pero espera al LLM antes de responder. Solo para benchmark JMeter |
+
+---
+
+### Prueba del flujo
+
+```powershell
+# Enviar un reclamo (responde en milisegundos)
+$cred = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("12345678:clave123"))
+Invoke-RestMethod -Uri "http://localhost:8080/TallerJavaEquipo6/api/clientes/12345678/reclamos" `
+  -Method Post -ContentType "application/json" `
+  -Headers @{Authorization="Basic $cred"} `
+  -Body '{"comentario":"el cargador no funciono, pesimo servicio"}'
+```
+
+En los logs de WildFly se verá la separación temporal entre la respuesta HTTP y la clasificación:
+
+```
+23:32:40 — Publicando reclamo en la queue, idReclamo=X
+             ↑ el cliente ya recibió HTTP 201 aquí
+
+23:32:53 — Reclamo recibido desde la queue: {idReclamo:X,...}
+23:32:53 — update reclamos set etiqueta=NEGATIVO
+23:32:53 — Publicando evento: ReclamoClasificado — etiqueta=NEGATIVO
+23:32:53 — Evento recibido: ReclamoClasificado NEGATIVO — incrementando reclamosNegativos
+23:32:53 — Reclamo idReclamo=X procesado
+```
+
+El LLM tardó ~13 segundos procesando en background, pero el cliente no esperó nada de eso.
+
+---
+
+### Plan de pruebas JMeter
+
+El archivo `PlanDePruebasReclamos.jmx` (raíz del proyecto) compara la latencia percibida por el cliente entre ambos enfoques:
+
+| Thread Group | Endpoint | Usuarios | Iteraciones | Qué mide |
+|---|---|---|---|---|
+| Asíncrono (con JMS) | `POST /reclamos` | 3 | 2 | El cliente responde en milisegundos — el LLM trabaja en background |
+| Síncrono (temporal) | `POST /reclamos/sincro` | 3 | 2 | El cliente espera al LLM — evidencia el costo del procesamiento síncrono |
+
+---
+
+
+---
+
+*Documentación para las Iteraciones 1, 2, 3 y 4 — Taller Java 2026, UTEC Maldonado.*
