@@ -908,7 +908,7 @@ En esta iteración se incorporó monitoreo de métricas de negocio en tiempo rea
 
 ---
 
-### Arquitectura de observabilidad
+### Arquitectura de observabilidad (SEPARAR ARQUITECTURA DE FLUJO DE EVENTOPS )
 
 ```
 WildFly (ModuloMonitoreo)
